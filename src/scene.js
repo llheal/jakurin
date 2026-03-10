@@ -202,8 +202,8 @@ export class SceneManager {
    * Render one frame
    */
   render() {
-    this._updateOrbit();
     this.controls.update();
+    this._updateOrbit();
 
     // Apply screen shake
     if (this._shakeIntensity > 0.001) {
