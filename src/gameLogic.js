@@ -113,8 +113,8 @@ export class GameState {
         if (match) columnTiles.push(match);
       }
 
-      // Need at least 3 tiles in the column to match
-      if (columnTiles.length < 3) continue;
+      // Must have a tile in every row to match
+      if (columnTiles.length < ROWS) continue;
 
       // Check if all tiles in this column are the same type
       const firstType = columnTiles[0].typeKey;
