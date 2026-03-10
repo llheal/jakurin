@@ -299,6 +299,13 @@ html, body {
   font-size: 1.2rem;
 }
 
+.btn-share {
+  padding: 10px 14px;
+  font-size: 1.2rem;
+  background: rgba(6, 199, 85, 0.3);
+  border-color: rgba(6, 199, 85, 0.5);
+}
+
 .btn-cat.cat-active {
   background: linear-gradient(135deg, rgba(184, 134, 11, 0.4) 0%, rgba(197, 61, 67, 0.3) 100%);
   border-color: var(--gold);

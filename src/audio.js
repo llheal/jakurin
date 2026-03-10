@@ -279,83 +279,131 @@ export function playEliminateSound() {
 // ═══════════════════════════════════════
 
 let bgmNodes = [];
+let bgmTimers = [];
 
 /**
- * Start looping ambient BGM — gentle Japanese-inspired ambient
- * Uses layered oscillators: pentatonic pads + slow arpeggios
+ * Start looping piano BGM — gentle calming piano melody
  */
 export function startBGM() {
   if (!audioCtx || bgmPlaying) return;
   bgmPlaying = true;
 
-  // ─── Pad layer: warm sustained chords ───
-  const padNotes = [261.6, 329.6, 392.0, 523.3]; // C4, E4, G4, C5
-  padNotes.forEach(freq => {
+  // Piano note frequencies (Hz)
+  const NOTE = {
+    C3: 130.81, D3: 146.83, E3: 164.81, F3: 174.61, G3: 196.00, A3: 220.00, B3: 246.94,
+    C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23, G4: 392.00, A4: 440.00, B4: 493.88,
+    C5: 523.25, D5: 587.33, E5: 659.25, G5: 783.99,
+  };
+
+  // Piano melody phrases (calming, Debussy-like)
+  const phrases = [
+    // Phrase 1: Gentle ascending
+    [NOTE.C4, NOTE.E4, NOTE.G4, NOTE.C5, NOTE.E5, NOTE.C5, NOTE.G4, NOTE.E4],
+    // Phrase 2: Soft descent
+    [NOTE.A4, NOTE.E4, NOTE.C4, NOTE.A3, NOTE.C4, NOTE.E4, NOTE.G4, NOTE.E4],
+    // Phrase 3: Dreamy
+    [NOTE.F4, NOTE.A4, NOTE.C5, NOTE.E5, NOTE.D5, NOTE.C5, NOTE.A4, NOTE.G4],
+    // Phrase 4: Resolution
+    [NOTE.G4, NOTE.E4, NOTE.C4, NOTE.D4, NOTE.E4, NOTE.G4, NOTE.C5, NOTE.G4],
+    // Phrase 5: Variation
+    [NOTE.E4, NOTE.G4, NOTE.B4, NOTE.C5, NOTE.D5, NOTE.C5, NOTE.B4, NOTE.G4],
+    // Phrase 6: Tender
+    [NOTE.A3, NOTE.C4, NOTE.E4, NOTE.A4, NOTE.G4, NOTE.E4, NOTE.C4, NOTE.E4],
+  ];
+
+  // Left hand (bass) — simple sustained notes per phrase
+  const bassNotes = [NOTE.C3, NOTE.A3, NOTE.F3, NOTE.G3, NOTE.E3, NOTE.A3];
+
+  let phraseIdx = 0;
+  let noteIdx = 0;
+
+  // Play a single piano note
+  function playPianoNote(freq, duration, velocity = 0.06) {
+    if (!bgmPlaying || !audioCtx) return;
+
+    // Main tone (triangle = soft piano-like)
     const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    const filter = audioCtx.createBiquadFilter();
-    osc.type = 'sine';
+    osc.type = 'triangle';
     osc.frequency.value = freq;
+
+    // Harmonic (adds brightness)
+    const osc2 = audioCtx.createOscillator();
+    osc2.type = 'sine';
+    osc2.frequency.value = freq * 2;
+
+    const gain = audioCtx.createGain();
+    const gain2 = audioCtx.createGain();
+    const t = audioCtx.currentTime;
+
+    // Piano envelope: fast attack, medium decay, gentle release
+    gain.gain.setValueAtTime(0, t);
+    gain.gain.linearRampToValueAtTime(velocity, t + 0.008);       // hammer strike
+    gain.gain.exponentialRampToValueAtTime(velocity * 0.5, t + 0.1); // initial decay
+    gain.gain.exponentialRampToValueAtTime(0.001, t + duration);     // sustain release
+
+    gain2.gain.setValueAtTime(0, t);
+    gain2.gain.linearRampToValueAtTime(velocity * 0.15, t + 0.005);
+    gain2.gain.exponentialRampToValueAtTime(0.001, t + duration * 0.6);
+
+    // Low-pass filter for warmth
+    const filter = audioCtx.createBiquadFilter();
     filter.type = 'lowpass';
-    filter.frequency.value = 800;
-    filter.Q.value = 0.5;
-    gain.gain.value = 0.025;
+    filter.frequency.value = 2500;
+    filter.Q.value = 0.7;
+
     osc.connect(filter);
     filter.connect(gain);
     gain.connect(bgmGain);
-    osc.start();
-    bgmNodes.push({ osc, gain });
-  });
+    osc2.connect(gain2);
+    gain2.connect(bgmGain);
 
-  // ─── Sub bass drone ───
-  const sub = audioCtx.createOscillator();
-  const subGain = audioCtx.createGain();
-  sub.type = 'sine';
-  sub.frequency.value = 65.4; // C2
-  subGain.gain.value = 0.04;
-  sub.connect(subGain);
-  subGain.connect(bgmGain);
-  sub.start();
-  bgmNodes.push({ osc: sub, gain: subGain });
-
-  // ─── Arpeggio layer: gentle pentatonic plucks ───
-  const arpNotes = [523, 659, 784, 1047, 784, 659]; // C5 E5 G5 C6 G5 E5
-  let arpIndex = 0;
-
-  function scheduleArp() {
-    if (!bgmPlaying) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    const t = audioCtx.currentTime;
-    osc.type = 'sine';
-    osc.frequency.value = arpNotes[arpIndex % arpNotes.length];
-    gain.gain.setValueAtTime(0, t);
-    gain.gain.linearRampToValueAtTime(0.03, t + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, t + 1.5);
-    osc.connect(gain);
-    gain.connect(bgmGain);
     osc.start(t);
-    osc.stop(t + 1.6);
-    arpIndex++;
-    // Schedule next note with some variation
-    const interval = 1800 + Math.random() * 1200; // 1.8-3s between notes
-    bgmTimer = setTimeout(scheduleArp, interval);
+    osc.stop(t + duration + 0.1);
+    osc2.start(t);
+    osc2.stop(t + duration + 0.1);
   }
 
-  scheduleArp();
-}
+  // Schedule the next note in the melody
+  function scheduleNext() {
+    if (!bgmPlaying) return;
 
-let bgmTimer = null;
+    const phrase = phrases[phraseIdx % phrases.length];
+    const freq = phrase[noteIdx];
+
+    // Melody note
+    const noteDur = 0.8 + Math.random() * 0.4; // slight random to feel human
+    playPianoNote(freq, noteDur, 0.055 + Math.random() * 0.02);
+
+    // Bass note at start of each phrase
+    if (noteIdx === 0) {
+      const bassFreq = bassNotes[phraseIdx % bassNotes.length];
+      playPianoNote(bassFreq, 3.0, 0.035);
+    }
+
+    noteIdx++;
+    if (noteIdx >= phrase.length) {
+      noteIdx = 0;
+      phraseIdx++;
+      // Small pause between phrases
+      const pauseMs = 600 + Math.random() * 400;
+      bgmTimers.push(setTimeout(scheduleNext, pauseMs));
+    } else {
+      // Tempo: ~100 BPM with slight swing
+      const intervalMs = 350 + Math.random() * 100;
+      bgmTimers.push(setTimeout(scheduleNext, intervalMs));
+    }
+  }
+
+  scheduleNext();
+}
 
 /**
  * Stop BGM
  */
 export function stopBGM() {
   bgmPlaying = false;
-  if (bgmTimer) {
-    clearTimeout(bgmTimer);
-    bgmTimer = null;
-  }
+  bgmTimers.forEach(t => clearTimeout(t));
+  bgmTimers = [];
   bgmNodes.forEach(({ osc, gain }) => {
     try {
       gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
