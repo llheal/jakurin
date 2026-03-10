@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="雀輪（じゃくりん）— 円柱に並んだ麻雀牌のリングを回転させて、縦一列を揃えて消す新感覚3Dパズルゲーム。美麗なPBR麻雀牌で脳トレ＆リラックス。LINE対応。" />
+  <meta property="og:title" content="雀輪 JAKURIN — 3D麻雀リングパズル" />
+  <meta property="og:description" content="円柱に並んだ麻雀牌のリングを回転させて、縦一列を揃えて消す新感覚パズル" />
+  <meta property="og:type" content="website" />
+  <title>雀輪 JAKURIN — 3D麻雀リングパズル</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/ui/styles.css" />
+</head>
+<body>
+  <!-- Three.js Canvas Container -->
+  <div id="canvas-container"></div>
+
+  <!-- UI Overlay -->
+  <div id="ui-overlay">
+    <!-- Main Menu -->
+    <div id="main-menu" class="screen active">
+      <div class="menu-content">
+        <div class="logo-area">
+          <h1 class="game-title">
+            <span class="title-ja">雀 輪</span>
+            <span class="title-sub">JAKURIN</span>
+          </h1>
+        </div>
+        <div class="menu-buttons">
+          <button id="btn-start" class="btn btn-primary">
+            <span class="btn-icon">▶</span>
+            <span>ゲーム開始</span>
+          </button>
+          <button id="btn-theme" class="btn btn-secondary">
+            <span class="btn-icon">🐱</span>
+            <span>猫テーマ</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- In-Game HUD -->
+    <div id="game-hud" class="screen">
+      <div class="hud-top">
+        <div class="hud-stat">
+          <span class="hud-label">残り</span>
+          <span id="hud-remaining" class="hud-value">144</span>
+        </div>
+        <div class="hud-stat">
+          <span class="hud-label">時間</span>
+          <span id="hud-timer" class="hud-value">0:00</span>
+        </div>
+      </div>
+      <div class="hud-bottom">
+        <button id="btn-hint" class="btn btn-hud">
+          <span>💡 ヒント</span>
+        </button>
+        <button id="btn-shuffle" class="btn btn-hud">
+          <span>🔀 シャッフル</span>
+        </button>
+        <button id="btn-cat-toggle" class="btn btn-hud btn-cat">
+          <span>🐾</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Win Modal -->
+    <div id="modal-win" class="modal">
+      <div class="modal-content">
+        <div class="modal-icon">🎉</div>
+        <h2>おめでとう！</h2>
+        <p id="win-stats">クリアタイム: 0:00</p>
+        <div class="modal-buttons">
+          <button id="btn-replay" class="btn btn-primary">もう一度</button>
+          <button id="btn-share" class="btn btn-secondary">シェア</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deadlock Modal -->
+    <div id="modal-deadlock" class="modal">
+      <div class="modal-content">
+        <div class="modal-icon">🔄</div>
+        <h2>手詰まり</h2>
+        <p>マッチできるペアがありません</p>
+        <div class="modal-buttons">
+          <button id="btn-auto-shuffle" class="btn btn-primary">シャッフルする</button>
+          <button id="btn-restart" class="btn btn-secondary">最初から</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
