@@ -15,6 +15,9 @@
     }
   ],
   "rewrites": [
+    { "source": "/privacy.html", "destination": "/privacy.html" },
+    { "source": "/terms.html", "destination": "/terms.html" },
+    { "source": "/about.html", "destination": "/about.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
