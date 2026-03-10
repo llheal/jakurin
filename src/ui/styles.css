@@ -405,3 +405,39 @@ html, body {
   .title-ja { font-size: 5rem; }
   .menu-buttons { width: 280px; }
 }
+
+/* --- App Footer (Privacy / Terms / About) --- */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.app-footer a {
+  color: rgba(255, 255, 255, 0.6);
+  text-decoration: none;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  transition: color 0.2s;
+}
+
+.app-footer a:hover,
+.app-footer a:active {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.footer-sep {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 11px;
+}
