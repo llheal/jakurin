@@ -99,18 +99,54 @@ export class SceneManager {
   }
 
   setupFloor() {
-    // Minimal dark floor far below for context
-    const floorGeo = new THREE.PlaneGeometry(60, 60);
-    const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x0D0D1A,
-      roughness: 0.95,
-      metalness: 0.0,
+    // Reflective dark floor
+    const floorGeo = new THREE.CircleGeometry(20, 64);
+    const floorMat = new THREE.MeshPhysicalMaterial({
+      color: 0x0A0A18,
+      roughness: 0.3,
+      metalness: 0.4,
+      clearcoat: 0.8,
+      clearcoatRoughness: 0.15,
     });
     const floor = new THREE.Mesh(floorGeo, floorMat);
     floor.rotation.x = -Math.PI / 2;
-    floor.position.y = -12;
+    floor.position.y = -6;
     floor.receiveShadow = true;
     this.scene.add(floor);
+
+    // Soft glow ring under the cylinder
+    const glowGeo = new THREE.RingGeometry(2.5, 5, 64);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: 0x1B6B3A,
+      transparent: true,
+      opacity: 0.12,
+      side: THREE.DoubleSide,
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    glow.rotation.x = -Math.PI / 2;
+    glow.position.y = -5.9;
+    this.scene.add(glow);
+
+    // Floating ambient dust particles
+    const dustCount = 120;
+    const dustGeo = new THREE.BufferGeometry();
+    const dustPos = new Float32Array(dustCount * 3);
+    for (let i = 0; i < dustCount; i++) {
+      dustPos[i * 3] = (Math.random() - 0.5) * 30;
+      dustPos[i * 3 + 1] = (Math.random() - 0.5) * 20;
+      dustPos[i * 3 + 2] = (Math.random() - 0.5) * 30;
+    }
+    dustGeo.setAttribute('position', new THREE.Float32BufferAttribute(dustPos, 3));
+    const dustMat = new THREE.PointsMaterial({
+      size: 0.04,
+      color: 0xFFD700,
+      transparent: true,
+      opacity: 0.3,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
+    this.dustParticles = new THREE.Points(dustGeo, dustMat);
+    this.scene.add(this.dustParticles);
   }
 
   setupPostProcessing() {
@@ -175,6 +211,11 @@ export class SceneManager {
       this.camera.position.x += offsetX;
       this.camera.position.y += offsetY;
       this._shakeIntensity *= 0.88; // decay
+    }
+
+    // Slowly rotate dust particles for ambient atmosphere
+    if (this.dustParticles) {
+      this.dustParticles.rotation.y += 0.0003;
     }
 
     this.composer.render();

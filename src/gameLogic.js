@@ -197,4 +197,33 @@ export class GameState {
     }
     return null;
   }
+
+  /**
+   * Find the column closest to a full match (most tiles of same type)
+   */
+  findBestColumn() {
+    let bestCol = null;
+    let bestCount = 0;
+
+    for (let col = 0; col < COLS; col++) {
+      const columnTiles = [];
+      for (let row = 0; row < ROWS; row++) {
+        const tilesInRow = this.tiles.filter(t => t.row === row && !t.removed);
+        const match = tilesInRow.find(t => getVisualCol(t, this.ringOffsets) === col);
+        if (match) columnTiles.push(match);
+      }
+      if (columnTiles.length < 2) continue;
+
+      // Count most frequent type
+      const counts = {};
+      columnTiles.forEach(t => { counts[t.typeKey] = (counts[t.typeKey] || 0) + 1; });
+      const maxCount = Math.max(...Object.values(counts));
+      if (maxCount > bestCount) {
+        bestCount = maxCount;
+        bestCol = col;
+      }
+    }
+
+    return bestCol;
+  }
 }

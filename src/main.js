@@ -90,8 +90,8 @@ class VitaMahjong {
       this.tileRenderer.highlightColumn(colIndex, true);
 
       setTimeout(() => {
-        const pos = this.tileRenderer.removeColumn(matchedTiles);
-        if (pos) this.particles.burst(pos);
+        const positions = this.tileRenderer.removeColumn(matchedTiles);
+        positions.forEach(pos => this.particles.burst(pos));
         this.tileRenderer.highlightColumn(colIndex, false);
         // Screen shake!
         this.sceneManager.screenShake(0.35);
@@ -165,16 +165,22 @@ class VitaMahjong {
 
   showHint() {
     if (!this.gameState) return;
-    const hint = this.gameState.findHint();
-    if (hint) {
-      // Highlight the target column
-      this.tileRenderer.highlightColumn(hint.col, true);
-      setTimeout(() => {
-        this.tileRenderer.highlightColumn(hint.col, false);
-      }, 2000);
 
-      // Flash the row that needs rotation
-      // Could show UI indicator for which row to rotate
+    // First try: exact 1-ring-rotation hint
+    const exactHint = this.gameState.findHint();
+    if (exactHint) {
+      this.tileRenderer.highlightColumn(exactHint.col, true);
+      playTapSound();
+      setTimeout(() => this.tileRenderer.highlightColumn(exactHint.col, false), 2500);
+      return;
+    }
+
+    // Fallback: find the column closest to matching (most same-type tiles)
+    const bestCol = this.gameState.findBestColumn();
+    if (bestCol !== null) {
+      this.tileRenderer.highlightColumn(bestCol, true);
+      playTapSound();
+      setTimeout(() => this.tileRenderer.highlightColumn(bestCol, false), 2500);
     }
   }
 

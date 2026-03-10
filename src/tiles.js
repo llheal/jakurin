@@ -252,6 +252,8 @@ export class TileRenderer {
   }
 
   removeColumn(tiles) {
+    const positions = [];
+
     tiles.forEach(tile => {
       const idx = this.tiles.findIndex(t => t.id === tile.id);
       if (idx === -1) return;
@@ -259,11 +261,17 @@ export class TileRenderer {
       const finalAngle = tile.col * ANGLE_STEP + ringAngle;
       const totalHeight = ROWS * (TILE_H + 0.02);
       const yOffset = -totalHeight / 2;
+      const y = yOffset + tile.row * (TILE_H + 0.02);
+
+      positions.push(new THREE.Vector3(
+        Math.cos(finalAngle) * CYLINDER_RADIUS,
+        y,
+        Math.sin(finalAngle) * CYLINDER_RADIUS
+      ));
 
       this.animations.push({
         type: 'remove', tileIdx: idx,
-        angle: finalAngle,
-        y: yOffset + tile.row * (TILE_H + 0.02),
+        angle: finalAngle, y,
         startTime: performance.now(), duration: 600,
       });
 
@@ -276,18 +284,7 @@ export class TileRenderer {
       }
     });
 
-    if (tiles.length > 0) {
-      const midTile = tiles[Math.floor(tiles.length / 2)];
-      const angle = midTile.col * ANGLE_STEP + (this.ringAngles[midTile.row] || 0);
-      const totalHeight = ROWS * (TILE_H + 0.02);
-      const yOffset = -totalHeight / 2;
-      return new THREE.Vector3(
-        Math.cos(angle) * CYLINDER_RADIUS,
-        yOffset + midTile.row * (TILE_H + 0.02),
-        Math.sin(angle) * CYLINDER_RADIUS
-      );
-    }
-    return null;
+    return positions;
   }
 
   refreshFaces() { this.createFacePlanes(); this.updateAllTransforms(); }
