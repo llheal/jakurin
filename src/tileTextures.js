@@ -346,8 +346,8 @@ function drawCatTile(ctx, x, y, key, index) {
   ctx.fillStyle = bgColor;
   ctx.fillRect(x, y, TILE_SIZE, TILE_SIZE);
 
-  ctx.strokeStyle = '#F0D8D8';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#E0B8B8';
+  ctx.lineWidth = 3;
   ctx.strokeRect(x + 2, y + 2, TILE_SIZE - 4, TILE_SIZE - 4);
 
   const cx = x + TILE_SIZE / 2;
@@ -355,31 +355,37 @@ function drawCatTile(ctx, x, y, key, index) {
   const tileInfo = TILE_TYPES[key];
 
   if (tileInfo.suit === 'pin') {
-    // Paw pads
-    drawPawPad(ctx, cx, cy, PAW_COLORS[tileInfo.num - 1] || '#FFB6C1', TILE_SIZE * 0.35);
+    // Paw pads — larger
+    drawPawPad(ctx, cx, cy, PAW_COLORS[tileInfo.num - 1] || '#FFB6C1', TILE_SIZE * 0.55);
+    // Number below
+    ctx.fillStyle = '#333';
+    ctx.font = `bold ${TILE_SIZE * 0.22}px sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tileInfo.num, cx, y + TILE_SIZE - 16);
   } else if (tileInfo.suit === 'man' || tileInfo.suit === 'sou') {
-    // Cat face
+    // Cat face — larger
     const breed = CAT_BREEDS[(tileInfo.num - 1) % CAT_BREEDS.length];
-    drawCatFace(ctx, cx, cy, breed.color, TILE_SIZE * 0.35);
-    // Number indicator
-    ctx.fillStyle = '#666';
-    ctx.font = `bold ${TILE_SIZE * 0.18}px sans-serif`;
+    drawCatFace(ctx, cx, cy - 4, breed.color, TILE_SIZE * 0.55);
+    // Number below — bolder
+    ctx.fillStyle = '#333';
+    ctx.font = `bold ${TILE_SIZE * 0.22}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(tileInfo.num, cx, y + TILE_SIZE - 14);
   } else if (tileInfo.suit === 'wind' || tileInfo.suit === 'dragon') {
-    // Cat accessories
+    // Cat accessories — larger emoji
     const emojis = ['🎀', '🐟', '🧶', '🔔', '🌸', '⭐', '🎵'];
     const eIdx = TILE_TYPE_KEYS.indexOf(key) - TILE_TYPE_KEYS.indexOf('WIND_E');
-    ctx.font = `${TILE_SIZE * 0.45}px sans-serif`;
+    ctx.font = `${TILE_SIZE * 0.65}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(emojis[eIdx % emojis.length], cx, cy);
   } else if (tileInfo.suit === 'flower') {
-    // Cat expressions
+    // Cat expressions — larger emoji
     const catEmojis = ['😺', '😸', '😻', '😽', '🙀', '😹', '😼', '😿'];
     const fIdx = TILE_TYPE_KEYS.indexOf(key) - TILE_TYPE_KEYS.indexOf('FLOWER_1');
-    ctx.font = `${TILE_SIZE * 0.5}px sans-serif`;
+    ctx.font = `${TILE_SIZE * 0.65}px sans-serif`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(catEmojis[fIdx % catEmojis.length], cx, cy);

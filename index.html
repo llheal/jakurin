@@ -41,6 +41,33 @@
       </div>
     </div>
 
+    <!-- First-Run Tutorial -->
+    <div id="tutorial-overlay" class="tutorial-overlay" style="display:none;">
+      <div class="tutorial-card">
+        <div id="tutorial-step-1" class="tutorial-step active">
+          <div class="tutorial-emoji">👆</div>
+          <h3>横にスワイプ</h3>
+          <p>各段のリングを左右にスワイプして回転させよう</p>
+        </div>
+        <div id="tutorial-step-2" class="tutorial-step">
+          <div class="tutorial-emoji">🀄</div>
+          <h3>縦一列を揃える</h3>
+          <p>縦一列が全て同じ牌になると消去されます</p>
+        </div>
+        <div id="tutorial-step-3" class="tutorial-step">
+          <div class="tutorial-emoji">🎉</div>
+          <h3>全部消そう！</h3>
+          <p>全ての牌を消去すればクリア！</p>
+        </div>
+        <div class="tutorial-dots">
+          <span class="dot active" data-step="1"></span>
+          <span class="dot" data-step="2"></span>
+          <span class="dot" data-step="3"></span>
+        </div>
+        <button id="btn-tutorial-next" class="btn btn-primary tutorial-btn">次へ</button>
+      </div>
+    </div>
+
     <!-- In-Game HUD -->
     <div id="game-hud" class="screen">
       <div class="hud-top">

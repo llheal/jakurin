@@ -60,6 +60,36 @@ class VitaMahjong {
 
     // Start render loop
     this.animate();
+
+    // Show tutorial on first run
+    this.checkTutorial();
+  }
+
+  checkTutorial() {
+    if (localStorage.getItem('jakurin_tutorial_done')) return;
+    const overlay = document.getElementById('tutorial-overlay');
+    if (!overlay) return;
+    overlay.style.display = 'flex';
+
+    let step = 1;
+    const totalSteps = 3;
+    const btn = document.getElementById('btn-tutorial-next');
+    const steps = overlay.querySelectorAll('.tutorial-step');
+    const dots = overlay.querySelectorAll('.dot');
+
+    btn.addEventListener('click', () => {
+      step++;
+      if (step > totalSteps) {
+        overlay.style.display = 'none';
+        localStorage.setItem('jakurin_tutorial_done', '1');
+        return;
+      }
+      steps.forEach(s => s.classList.remove('active'));
+      dots.forEach(d => d.classList.remove('active'));
+      document.getElementById(`tutorial-step-${step}`)?.classList.add('active');
+      dots[step - 1]?.classList.add('active');
+      if (step === totalSteps) btn.textContent = '始める！';
+    });
   }
 
   startGame() {

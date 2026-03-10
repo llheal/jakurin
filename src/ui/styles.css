@@ -448,3 +448,83 @@ html, body {
   color: rgba(255, 255, 255, 0.25);
   font-size: 11px;
 }
+
+/* --- Tutorial Overlay --- */
+.tutorial-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: fadeIn 0.4s ease-out;
+}
+
+.tutorial-card {
+  background: linear-gradient(160deg, var(--navy) 0%, var(--ink) 100%);
+  border: 1px solid var(--white-alpha-20);
+  border-radius: var(--radius-lg);
+  padding: 36px 28px 28px;
+  text-align: center;
+  max-width: 300px;
+  width: 85%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tutorial-step {
+  display: none;
+}
+
+.tutorial-step.active {
+  display: block;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tutorial-emoji {
+  font-size: 3.5rem;
+  margin-bottom: 12px;
+}
+
+.tutorial-step h3 {
+  font-family: var(--font-serif);
+  font-size: 1.3rem;
+  color: var(--cream);
+  margin-bottom: 8px;
+  letter-spacing: 0.1em;
+}
+
+.tutorial-step p {
+  font-size: 0.85rem;
+  color: var(--white-alpha-60);
+  line-height: 1.6;
+  margin-bottom: 4px;
+}
+
+.tutorial-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 20px 0 16px;
+}
+
+.tutorial-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--white-alpha-20);
+  transition: all 0.3s;
+}
+
+.tutorial-dots .dot.active {
+  background: var(--gold-light);
+  transform: scale(1.3);
+}
+
+.tutorial-btn {
+  width: 100%;
+  margin-top: 4px;
+}
