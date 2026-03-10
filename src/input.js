@@ -107,7 +107,7 @@ export class InputHandler {
       // Convert pixel movement to angle
       // More pixels for slower, more controlled rotation
       const sensitivity = 0.005;
-      const angleDelta = moveDx * sensitivity;
+      const angleDelta = -moveDx * sensitivity;
 
       this.onRingDrag?.(this.dragRow, angleDelta);
     }
