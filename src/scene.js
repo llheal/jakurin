@@ -202,6 +202,7 @@ export class SceneManager {
    * Render one frame
    */
   render() {
+    this._updateOrbit();
     this.controls.update();
 
     // Apply screen shake
@@ -227,6 +228,33 @@ export class SceneManager {
    */
   screenShake(intensity = 0.3) {
     this._shakeIntensity = intensity;
+  }
+
+  /**
+   * Smoothly orbit camera to face a specific angle on the cylinder
+   * @param {number} targetAngle - target angle in radians (0 = original position)
+   */
+  orbitTo(targetAngle) {
+    this._orbitTarget = targetAngle;
+    this._orbitStart = this._orbitAngle || 0;
+    this._orbitStartTime = performance.now();
+    this._orbitDuration = 800;
+  }
+
+  _updateOrbit() {
+    if (this._orbitTarget === undefined || this._orbitTarget === null) return;
+    const t = Math.min((performance.now() - this._orbitStartTime) / this._orbitDuration, 1);
+    const ease = 1 - Math.pow(1 - t, 3); // easeOutCubic
+    this._orbitAngle = this._orbitStart + (this._orbitTarget - this._orbitStart) * ease;
+
+    const dist = 18;
+    this.camera.position.x = Math.cos(this._orbitAngle) * dist;
+    this.camera.position.z = Math.sin(this._orbitAngle) * dist;
+    this.camera.lookAt(0, 0, 0);
+
+    if (t >= 1) {
+      this._orbitTarget = null;
+    }
   }
 
   getDelta() {

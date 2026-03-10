@@ -125,6 +125,9 @@ class VitaMahjong {
         this.tileRenderer.highlightColumn(colIndex, false);
         // Screen shake!
         this.sceneManager.screenShake(0.35);
+
+        // Auto-center: orbit camera to face nearest non-empty column
+        setTimeout(() => this.autoCenterCamera(), 400);
       }, 300);
     };
 
@@ -229,6 +232,48 @@ class VitaMahjong {
     this.ui.hideModal(this.ui.modalWin);
     this.ui.hideModal(this.ui.modalDeadlock);
     this.startGame();
+  }
+
+  autoCenterCamera() {
+    if (!this.gameState) return;
+    const cam = this.sceneManager.camera;
+    // Current camera facing angle (angle from +X axis in XZ plane)
+    const currentAngle = Math.atan2(cam.position.z, cam.position.x);
+
+    // Find all visual columns that still have tiles
+    const activeCols = new Set();
+    for (let col = 0; col < COLS; col++) {
+      for (let row = 0; row < ROWS; row++) {
+        const tilesInRow = this.gameState.tiles.filter(t => t.row === row && !t.removed);
+        const match = tilesInRow.find(t => {
+          const visualCol = ((t.col + this.gameState.ringOffsets[row]) % COLS + COLS) % COLS;
+          return visualCol === col;
+        });
+        if (match) { activeCols.add(col); break; }
+      }
+    }
+    if (activeCols.size === 0) return;
+
+    // Find nearest active column angle to current camera angle
+    let bestAngle = currentAngle;
+    let bestDist = Infinity;
+    for (const col of activeCols) {
+      const colAngle = col * ANGLE_STEP;
+      // Try both directions for shortest path
+      let diff = colAngle - currentAngle;
+      // Normalize to [-PI, PI]
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      if (Math.abs(diff) < bestDist) {
+        bestDist = Math.abs(diff);
+        bestAngle = currentAngle + diff;
+      }
+    }
+
+    // Only orbit if the center column is empty (we need to re-center)
+    if (bestDist > 0.01) {
+      this.sceneManager.orbitTo(bestAngle);
+    }
   }
 
   async shareGame() {
