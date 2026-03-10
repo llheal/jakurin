@@ -81,10 +81,14 @@ export class UIController {
 
   showGame() {
     this.showScreen(this.gameHud);
+    const footer = document.getElementById('app-footer');
+    if (footer) footer.style.display = 'none';
   }
 
   showMenu() {
     this.showScreen(this.mainMenu);
+    const footer = document.getElementById('app-footer');
+    if (footer) footer.style.display = '';
   }
 
   showModal(modal) {
