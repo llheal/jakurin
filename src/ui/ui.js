@@ -48,7 +48,7 @@ export class UIController {
       this.updateThemeButton();
       this.onThemeToggle?.();
     });
-    this.btnHint.addEventListener('click', () => this.onHint?.());
+    if (this.btnHint) this.btnHint.addEventListener('click', () => this.onHint?.());
     this.btnShuffle.addEventListener('click', () => this.onShuffle?.());
     this.btnCatToggle.addEventListener('click', () => {
       this.isCatTheme = !this.isCatTheme;

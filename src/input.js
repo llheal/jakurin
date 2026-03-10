@@ -56,10 +56,12 @@ export class InputHandler {
    * Determine which row was hit based on Y coordinate
    */
   getRowFromY(worldY) {
-    const totalHeight = ROWS * (TILE_H + 0.02);
+    const rowSpacing = TILE_H + 0.02;
+    const totalHeight = ROWS * rowSpacing;
     const yOffset = -totalHeight / 2;
-    const localY = worldY - yOffset;
-    const row = Math.floor(localY / (TILE_H + 0.02));
+    // Use center of each row for better hit detection
+    const localY = worldY - yOffset + rowSpacing * 0.5;
+    const row = Math.floor(localY / rowSpacing);
     return Math.max(0, Math.min(ROWS - 1, row));
   }
 
